@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -100,7 +101,6 @@ var tokens = map[byte]string{ // Normal tokens
 	0xc5: "arccos(",     //
 	0xc7: "arctan(",     //
 	0x2b: ",",           //
-	0x5d: "/",           //
 	0x3e: ":",           //
 	0x03: ">Frac",       //
 	0x02: ">Dec",        //
@@ -132,11 +132,8 @@ var tokens = map[byte]string{ // Normal tokens
 }
 
 var tokens_bb = map[byte]string{ // 2-byte tokens
-	0x9E: "Wait ",         // Wait
-	0x42: "Pause ",        // Pause
 	0x45: "GraphStyle(",   //
 	0x54: "DelVar ",       //
-	0x53: "Output(",       //
 	0x2a: "expr(",         //
 	0x56: "String->Equ(",  //
 	0x4f: "a+bi",          //
@@ -155,7 +152,7 @@ var tokens_bb = map[byte]string{ // 2-byte tokens
 	0x29: "cumSum(",       //
 	0x07: "dbd(",          //
 	0x67: "DiagnosticOff", //
-	0x66: "BiagnosticOn",  //
+	0x66: "DiagnosticOn",  //
 	0x31: "e",             //
 	0x06: ">Eff(",         //
 	0x55: "Equ>String(",   //
@@ -236,14 +233,6 @@ var tokens_7e = map[byte]string{
 	0x05: "CoordOff",  //
 	0x04: "CoordOn",   //
 	0x07: "Dot-Thick", //
-}
-
-var reverse_tokens = map[string][]byte{
-	"AxesOff":   {0x09}, //
-	"AxesOn":    {0x08}, //
-	"CoordOff":  {0x05}, //
-	"CoordOn":   {0x04}, //
-	"Dot-Thick": {0x07}, //
 }
 
 func Eightxp_to_txt(from_path string, to_path string) {
@@ -336,7 +325,7 @@ func Eightxp_to_txt(from_path string, to_path string) {
 			}
 		}
 		{
-			//builder.WriteString(" (" + strconv.FormatInt(int64(val), 16) + ") ") // Uncomment to see hex equivalent
+			builder.WriteString(" (" + strconv.FormatInt(int64(val), 16) + ") ") // Uncomment to see hex equivalent
 		}
 		i += step
 	}
