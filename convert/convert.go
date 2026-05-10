@@ -1,6 +1,7 @@
 package convert
 
 import (
+	"encoding/hex"
 	"fmt"
 	"log"
 	"os"
@@ -125,10 +126,35 @@ var tokens = map[byte]string{ // Normal tokens
 	0xb3: "det(",        //
 	0x01: ">DMS",        //
 	0xbf: "e^(",         //
-	0x3b: "E",           //
 	0x68: "Eng",         //
 	0xf5: "ExpReg",      //
 	0x3a: ".",           //
+	0x41: "A",           //
+	0x42: "B",           //
+	0x43: "C",           //
+	0x44: "D",           //
+	0x45: "E",           //
+	0x46: "F",           //
+	0x47: "G",           //
+	0x48: "H",           //
+	0x49: "I",           //
+	0x4a: "J",           //
+	0x4b: "K",           //
+	0x4c: "L",           //
+	0x4d: "M",           //
+	0x4e: "N",           //
+	0x4f: "O",           //
+	0x50: "P",           //
+	0x51: "Q",           //
+	0x52: "R",           //
+	0x53: "S",           //
+	0x54: "T",           //
+	0x55: "U",           //
+	0x56: "V",           //
+	0x57: "W",           //
+	0x58: "X",           //
+	0x59: "Y",           //
+	0x5a: "Z",           //
 }
 
 var tokens_bb = map[byte]string{ // 2-byte tokens
@@ -184,7 +210,7 @@ var tokens_ef = map[byte]string{
 	0x67: "TextColor(",     //
 	0x5b: "BackgroundOn ",  //
 	0x64: "BackgroundOff ", //
-	0x2e: "L",              //
+	0x2e: "l",              //
 	0x33: "Sigma(",         //
 	0x34: "logBASE(",       //
 	0xa6: "piecewise(",     //
@@ -235,6 +261,242 @@ var tokens_7e = map[byte]string{
 	0x07: "Dot-Thick", //
 }
 
+var reverse_tokens = map[string][]byte{
+	"det(":           {179},
+	"ClrDraw":        {133},
+	"Shade(":         {164},
+	"A":              {65},
+	"!=":             {111},
+	">":              {108},
+	",":              {43},
+	"C":              {67},
+	"sqrt(":          {188},
+	"pi":             {172},
+	"ln(":            {190},
+	"fMin(":          {39},
+	"Degree":         {101},
+	"M":              {77},
+	"Z":              {90},
+	"If ":            {206},
+	"Else":           {208},
+	":":              {62},
+	"W":              {87},
+	"B":              {66},
+	"U":              {85},
+	"Repeat ":        {210},
+	"Menu(":          {230},
+	"Get(":           {232},
+	"Tangent(":       {167},
+	"tan(":           {198},
+	"/":              {131},
+	"(":              {16},
+	" or ":           {60},
+	"^2":             {13},
+	"CubicReg":       {46},
+	"e^(":            {191},
+	"Q":              {81},
+	"<":              {110},
+	"<=":             {109},
+	"Input ":         {220},
+	"Circle(":        {165},
+	"Pt-On(":         {158},
+	"cosh(":          {202},
+	"\"":             {42},
+	"Lbl ":           {214},
+	"->":             {4},
+	"Ans":            {114},
+	"K":              {75},
+	"N":              {78},
+	"O":              {79},
+	"Dispgraph":      {223},
+	"Pxl-On(":        {161},
+	"Pxl-Change(":    {163},
+	".":              {58},
+	"Disp ":          {222},
+	"theta":          {91},
+	"ExpReg":         {245},
+	"E":              {69},
+	"\n":             {63},
+	"augment(":       {20},
+	"DependAuto":     {124},
+	"I":              {73},
+	"L":              {76},
+	"Then":           {207},
+	"ClrTable":       {251},
+	"arccos(":        {197},
+	"arccosh(":       {203},
+	"P":              {80},
+	"log(":           {192},
+	"arcsin(":        {195},
+	"Horizontal ":    {166},
+	"solve(":         {34},
+	"D":              {68},
+	"F":              {70},
+	"+":              {112},
+	"Stop":           {217},
+	"Pt-Change(":     {160},
+	"=":              {106},
+	">=":             {107},
+	"arctan(":        {199},
+	"nDeriv(":        {37},
+	"BoxPlot":        {5},
+	"Pause ":         {216},
+	"fMax(":          {40},
+	"fnInt(":         {36},
+	"S":              {83},
+	"V":              {86},
+	")":              {17},
+	"!":              {45},
+	"Goto ":          {215},
+	"prgm":           {95},
+	">DMS":           {1},
+	"While ":         {209},
+	"Pt-Off(":        {159},
+	"dim(":           {181},
+	"-":              {113},
+	"Output(":        {224},
+	"Pxl-Off(":       {162},
+	"RecallPic ":     {153},
+	"^":              {240},
+	"}":              {9},
+	"]":              {7},
+	">Frac":          {3},
+	"DispTable":      {229},
+	"getKey":         {173},
+	"DrawInv ":       {168},
+	"StorePic ":      {152},
+	"RecallGDB ":     {155},
+	"sin(":           {194},
+	"abs(":           {178},
+	"G":              {71},
+	"cos(":           {196},
+	"[":              {6},
+	">Dec":           {2},
+	"^3":             {15},
+	"T":              {84},
+	"End":            {212},
+	" xor ":          {61},
+	"^-1":            {12},
+	"Eng":            {104},
+	"H":              {72},
+	"J":              {74},
+	"R":              {82},
+	"Y":              {89},
+	"Return":         {213},
+	"Text(":          {147},
+	"not(":           {184},
+	"IS>(":           {218},
+	"DrawF ":         {169},
+	" and ":          {64},
+	"StoreGDB ":      {154},
+	"X":              {88},
+	"Wait ":          {239},
+	"Prompt":         {221},
+	"ClrHome":        {225},
+	"pxl-Test(":      {19},
+	"DependAsk":      {125},
+	" ":              {41},
+	"For(":           {211},
+	"Send(":          {231},
+	"?":              {175},
+	"ClrList ":       {250},
+	"*":              {130},
+	"DS<(":           {219},
+	"Line(":          {156},
+	"Vertical ":      {157},
+	"{":              {8},
+	"i":              {44},
+	"GraphStyle(":    {0xbb, 69},
+	"String->Equ(":   {0xbb, 86},
+	"ANOVA(":         {0xbb, 89},
+	"Archive ":       {0xbb, 104},
+	"x^2-Test(":      {0xbb, 64},
+	"ClrAllLists":    {0xbb, 82},
+	"DiagnosticOn":   {0xbb, 102},
+	"Equ>String(":    {0xbb, 85},
+	"a+bi":           {0xbb, 79},
+	"conj(":          {0xbb, 37},
+	"dbd(":           {0xbb, 7},
+	"e":              {0xbb, 49},
+	"DelVar ":        {0xbb, 84},
+	"angle(":         {0xbb, 40},
+	"binomcdf(":      {0xbb, 22},
+	"binompdf(":      {0xbb, 21},
+	"x^2cdf(":        {0xbb, 19},
+	"x^pdf(":         {0xbb, 29},
+	"cumSum(":        {0xbb, 41},
+	">Eff(":          {0xbb, 6},
+	"expr(":          {0xbb, 42},
+	"bal(":           {0xbb, 2},
+	"Clear Entries":  {0xbb, 87},
+	"DiagnosticOff":  {0xbb, 103},
+	"ExprOff":        {0xbb, 81},
+	"ExprOn":         {0xbb, 80},
+	"GREEN":          {0xef, 69},
+	"WHITE":          {0xef, 75},
+	"DARKGRAY":       {0xef, 79},
+	"AUTO":           {0xef, 59},
+	"CENTER":         {0xef, 147},
+	"checkTmr(":      {0xef, 2},
+	"GraphColor(":    {0xef, 101},
+	"ORANGE":         {0xef, 70},
+	"l":              {0xef, 46},
+	"Sigma(":         {0xef, 51},
+	"logBASE(":       {0xef, 52},
+	"Dot-Thin":       {0xef, 117},
+	"BLUE":           {0xef, 65},
+	"BLACK":          {0xef, 67},
+	"MAGENTA":        {0xef, 68},
+	"GRAY":           {0xef, 78},
+	"CLASSIC":        {0xef, 56},
+	"RED":            {0xef, 66},
+	"NAVY":           {0xef, 72},
+	"x^2GOF-Test(":   {0xef, 20},
+	"DEC":            {0xef, 60},
+	"LTGRAY":         {0xef, 76},
+	"BackgroundOff ": {0xef, 100},
+	"DetectAsymOff":  {0xef, 107},
+	"toString(":      {0xef, 151},
+	"LTBLUE":         {0xef, 73},
+	"MEDGRAY":        {0xef, 77},
+	"TextColor(":     {0xef, 103},
+	"dayOfWk(":       {0xef, 6},
+	"DetectAsymOn":   {0xef, 106},
+	"OpenLib(":       {0xef, 17},
+	"eval(":          {0xef, 152},
+	"BROWN":          {0xef, 71},
+	"YELLOW":         {0xef, 74},
+	"BorderColor":    {0xef, 108},
+	"ClockOff":       {0xef, 15},
+	"ClockOn":        {0xef, 16},
+	"ExecLib":        {0xef, 18},
+	"BackgroundOn ":  {0xef, 91},
+	"piecewise(":     {0xef, 166},
+	"Ymin":           {0x63, 12},
+	"Ymax":           {0x63, 13},
+	"Xres":           {0x63, 54},
+	"deltaY":         {0x63, 39},
+	"TraceStep":      {0x63, 56},
+	"Xmax":           {0x63, 11},
+	"Yscl":           {0x63, 3},
+	"deltaX":         {0x63, 38},
+	"XFact":          {0x63, 40},
+	"Yfact":          {0x63, 41},
+	"Xmin":           {0x63, 10},
+	"Xscl":           {0x63, 2},
+	"L4":             {0x5d, 3},
+	"L5":             {0x5d, 4},
+	"L6":             {0x5d, 5},
+	"L1":             {0x5d, 0},
+	"L2":             {0x5d, 1},
+	"L3":             {0x5d, 2},
+	"AxesOff":        {0x7e, 9},
+	"AxesOn":         {0x7e, 8},
+	"CoordOff":       {0x7e, 5},
+	"CoordOn":        {0x7e, 4},
+	"Dot-Thick":      {0x7e, 7},
+}
+
 func Eightxp_to_txt(from_path string, to_path string) {
 	from_path = strings.TrimSpace(from_path)   // Remove whitespace
 	if !strings.HasSuffix(from_path, ".8xp") { // If file path doesn't have ".8xp" suffix,
@@ -244,18 +506,18 @@ func Eightxp_to_txt(from_path string, to_path string) {
 	to_path = strings.TrimSpace(to_path)          // Remove whitespace
 	to_path = strings.TrimSuffix(to_path, ".txt") // Remove ".txt" suffix
 
-	var program_metadata [4][]byte
+	var program_metadata [4]string
 	var program_data []byte
 	byte_data, err := os.ReadFile(from_path) // Read file data
 	if err != nil {
 		log.Fatal("Failed to read file data: ", err)
 	}
 	if len(byte_data) > 76 { // If data is more than 76 bytes long,
-		program_metadata[0] = byte_data[60:67]          // Store bytes 60-67 (program name)
-		program_metadata[1] = byte_data[11:52]          // Store bytes 11-52 (transmission comment)
-		program_metadata[2] = []byte{byte_data[59]}     // Store byte 59 (type id)
-		program_metadata[3] = []byte{byte_data[69]}     // Store bytes 69 (flag)
-		program_data = byte_data[74 : len(byte_data)-2] // Remove the first 74 bytes (program metadata) and last 2 bytes (checksum)
+		program_metadata[0] = string(byte_data[60:67])                  // Store bytes 60 - 67 (program name)
+		program_metadata[1] = string(byte_data[11:52])                  // Store bytes 11 - 52 (transmission comment)
+		program_metadata[2] = hex.EncodeToString([]byte{byte_data[59]}) // Store byte 59 (type id)
+		program_metadata[3] = hex.EncodeToString([]byte{byte_data[69]}) // Store bytes 69 (flag)
+		program_data = byte_data[74 : len(byte_data)-2]                 // Store bytes 74 - end-2 (program), remove the first 74 bytes (program metadata) and last 2 bytes (checksum)
 	}
 
 	var builder strings.Builder
@@ -325,7 +587,7 @@ func Eightxp_to_txt(from_path string, to_path string) {
 			}
 		}
 		{
-			builder.WriteString(" (" + strconv.FormatInt(int64(val), 16) + ") ") // Uncomment to see hex equivalent
+			//builder.WriteString(" (" + strconv.FormatInt(int64(val), 16) + ") ") // Uncomment to see hex equivalent
 		}
 		i += step
 	}
@@ -345,7 +607,7 @@ func Eightxp_to_txt(from_path string, to_path string) {
 	}
 	defer file.Close()
 	for i := 0; i < 4; i++ {
-		_, err = file.Write(program_metadata[i])
+		_, err = file.WriteString(program_metadata[i])
 		if err != nil {
 			log.Fatal("Failed to store program metadata: ", err)
 		}
@@ -372,5 +634,35 @@ func Txt_to_eightxp(from_path string, to_path string) {
 		log.Fatal("Failed to read program data: ", err)
 	}
 
-	fmt.Println(byte_data)
+	longest_command_length := 0
+	for key := range reverse_tokens {
+		if len(key) > longest_command_length {
+			longest_command_length = len(key)
+		}
+	}
+
+	var program_byte_data []byte
+	i := 0
+	n := longest_command_length
+	for i < len(byte_data) {
+		if i+n > len(byte_data) {
+			n = len(byte_data) - i
+		}
+		if n == -1 {
+			log.Fatal("Unknown command at position ", i)
+		}
+		command_bytes := byte_data[i : i+n]
+		arr, ok := reverse_tokens[string(command_bytes)]
+		if ok {
+			for j := 0; j < len(arr); j++ {
+				fmt.Println(strconv.FormatInt(int64(arr[j]), 16))
+				program_byte_data = append(program_byte_data, arr[j])
+			}
+			i += n
+			n = longest_command_length
+		} else {
+			n -= 1
+		}
+	}
+	fmt.Println(program_byte_data)
 }

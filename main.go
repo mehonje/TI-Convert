@@ -28,7 +28,7 @@ func main() {
 }
 
 func convert_8xp_to_txt() {
-	fmt.Print("Path to .8xp program file to convert: ") // Ask for input
+	fmt.Print("\nProgram file to convert: ") // Ask for input
 	reader := bufio.NewReader(os.Stdin)
 	from_path_input, err := reader.ReadString('\n') // Read input until newline
 	print_error(err)
@@ -40,7 +40,7 @@ func convert_8xp_to_txt() {
 }
 
 func convert_txt_to_8xp() {
-	fmt.Print("Path to .txt program file to convert: ") // Ask for input
+	fmt.Print("\nPath to .txt program file to convert: ") // Ask for input
 	reader := bufio.NewReader(os.Stdin)
 	from_path_input, err := reader.ReadString('\n') // Read input until newline
 	print_error(err)
