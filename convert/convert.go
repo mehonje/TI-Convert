@@ -312,7 +312,7 @@ func Eightxp_to_txt(from_path string, to_path string) {
 				} else {
 					builder.WriteString("Wait ") // Add "Wait" command (0xef) if no
 				}
-			case 0x6e:
+			case 0x63:
 				s, ok := tokens_63[next_val] // Check if mapping exists
 				if ok {
 					builder.WriteString(s) // Replace if yes,
