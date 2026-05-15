@@ -155,6 +155,16 @@ var tokens = map[byte]string{ // Normal tokens
 	0x58: "X",           //
 	0x59: "Y",           //
 	0x5a: "Z",           //
+	0x30: "0",           //
+	0x31: "1",           //
+	0x32: "2",           //
+	0x33: "3",           //
+	0x34: "4",           //
+	0x35: "5",           //
+	0x36: "6",           //
+	0x37: "7",           //
+	0x38: "8",           //
+	0x39: "9",           //
 }
 
 var tokens_bb = map[byte]string{ // 2-byte tokens
