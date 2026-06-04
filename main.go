@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
-	"ti_convert/convert"
+	"github.com/mehonje/TI-Convert/convert"
 )
 
 func main() {
