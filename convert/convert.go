@@ -355,9 +355,9 @@ func Eightxp_to_txt(from_path string, to_path string) {
 				}
 			}
 		} else { // 1-byte token
-			_, ok := tokens[val] // Check if mapping exists
+			s, ok := tokens[val] // Check if mapping exists
 			if ok {
-				builder.WriteString(tokens[val]) // Replace if yes,
+				builder.WriteString(s) // Replace if yes,
 			} else {
 				builder.WriteString(string(val)) // Turn into string if no
 			}
