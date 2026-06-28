@@ -165,6 +165,7 @@ var tokens = map[byte]string{ // Normal tokens
 	0x37: "7",           //
 	0x38: "8",           //
 	0x39: "9",           //
+	0x0a: "getTime",     //
 }
 
 var tokens_bb = map[byte]string{ // 2-byte tokens
@@ -237,6 +238,7 @@ var tokens_ef = map[byte]string{
 	0x6b: "DetectAsymOff",  //
 	0x6a: "DetectAsymOn",   //
 	0x75: "Dot-Thin",       //
+	0x09: "getDate",        //
 }
 
 var tokens_63 = map[byte]string{
@@ -269,6 +271,11 @@ var tokens_7e = map[byte]string{
 	0x05: "CoordOff",  //
 	0x04: "CoordOn",   //
 	0x07: "Dot-Thick", //
+}
+
+var tokens_aa = map[byte]string{
+	0x00: "Str1", //
+	0x01: "Str2", //
 }
 
 var reverse_tokens = map[string][]byte{}
@@ -346,6 +353,14 @@ func Eightxp_to_txt(from_path string, to_path string) {
 				} else {
 					builder.WriteString(string(val)) // Turn into string if no
 				}
+			case 0xaa:
+				s, ok := tokens_aa[next_val] //Check if mapping exists
+				if ok {
+					builder.WriteString(s) // Replace if yes,
+					step = 2
+				} else {
+					builder.WriteString(string(val)) // Turn into string if no
+				}
 			default:
 				_, ok := tokens[val] // Check if mapping exists
 				if ok {
@@ -363,7 +378,8 @@ func Eightxp_to_txt(from_path string, to_path string) {
 			}
 		}
 		{
-			//builder.WriteString(" (" + strconv.FormatInt(int64(val), 16) + ") ") // Uncomment to see hex equivalent
+			//var hex_string string = fmt.Sprintf("<%02x>", val)
+			//builder.WriteString(hex_string) // Uncomment to see hex equivalent
 		}
 		i += step
 	}
@@ -556,5 +572,8 @@ func init() {
 	}
 	for key, val := range tokens_7e {
 		reverse_tokens[val] = []byte{0x7e, key}
+	}
+	for key, val := range tokens_aa {
+		reverse_tokens[val] = []byte{0xaa, key}
 	}
 }
