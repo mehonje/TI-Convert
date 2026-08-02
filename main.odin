@@ -60,7 +60,10 @@ convert_8xp_to_txt :: proc() {
 
   bufio.scanner_destroy(&scanner)
 
-  res := convert.eightxp_to_txt(from_path, to_path)
+  err := convert.eightxp_to_txt(from_path, to_path)
+  if err != nil {
+    fmt.println(err)
+  }
 }
 
 convert_txt_to_8xp:: proc() {
