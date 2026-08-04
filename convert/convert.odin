@@ -184,15 +184,15 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
 }
 
 write_unknown_command :: proc(builder: ^strings.Builder, b: byte, debug: bool) {
-  strings.write_string(builder, fmt.tprintf("%c", b))
+  fmt.sbprintf(builder, "%c", b)
   if debug {
     strings.write_string(builder, fmt.tprintf("<%02x>", b))
-    fmt.printfln(`Write unknown command: %c<%s>`, b, fmt.tprintf("<%02x>", b))
+    fmt.printfln(`Write unknown command: %c<%s>`, b, fmt.tprintf("%02x", b))
   }
 }
 
 write_known_command :: proc(builder: ^strings.Builder, s: string, debug: bool) {
-  strings.write_string(builder, fmt.tprintf("%s", s))
+  fmt.sbprintf(builder, "%s", s)
   if debug {
     new_s, alloc := strings.replace_all(s, "\n", "\\n", context.temp_allocator)
     fmt.printfln(`Write command: %s`, new_s)
