@@ -18,7 +18,7 @@ Conversion_Error :: enum {
   Unknown_Command,
 }
 
-eightxp_to_txt :: proc(from_path, to_path: string) -> Conversion_Error {
+eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Error {
   eightxp_path: string = from_path
   from_path_ext := filepath.ext(from_path)
   if from_path_ext == "" {
@@ -152,6 +152,9 @@ eightxp_to_txt :: proc(from_path, to_path: string) -> Conversion_Error {
             strings.write_string(&builder, s)
           } else {
             strings.write_byte(&builder, curr_byte)
+            if debug {
+              strings.write_string(&builder, fmt.tprintf("<%02x>", curr_byte))
+            }
           }
       }
     } else {
@@ -160,6 +163,9 @@ eightxp_to_txt :: proc(from_path, to_path: string) -> Conversion_Error {
         strings.write_string(&builder, s)
       } else {
         strings.write_byte(&builder, curr_byte)
+        if debug {
+          strings.write_string(&builder, fmt.tprintf("<%02x>", curr_byte))
+        }
       }
     }
 
