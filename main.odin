@@ -15,8 +15,6 @@ main :: proc() {
 
   debug := false
   
-  fmt.println(args)
-
   {
     i := 0
     for i < len(args) {
@@ -31,8 +29,6 @@ main :: proc() {
       i += 1
     }
   }
-
-  fmt.println(args)
 
   if len(args) < 2 {
     fmt.println("Please provide at least an input file path")
