@@ -59,6 +59,13 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
   program_meta[1] = string(byte_data[11:52]) // store bytes 11 - 52 to metadat (transmission comment)
   program_meta[2] = fmt.tprintf("%02x", byte_data[59]) // store byte 59 to metadata (type id)
   program_meta[3] = fmt.tprintf("%02x", byte_data[69]) // store byte 69 to metadata (flag)
+  
+  if debug {
+    fmt.printfln("Program name: %s", program_meta[0])
+    fmt.printfln("Transmission comment: %s", program_meta[1])
+    fmt.printfln("Type id: %s", program_meta[2])
+    fmt.printfln("Flag: %s", program_meta[3])
+  }
 
   program_data = byte_data[74:len(byte_data) - 2] // store bytes 74 - end-2 to program data (program data)
 
@@ -101,71 +108,65 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
         case 0xbb:
           s, ok := tokens.tokens_bb[next_byte]
           if ok {
-            strings.write_string(&builder, s)
+            write_known_command(&builder, s, debug)
             step = 1
           } else {
-            strings.write_byte(&builder, curr_byte)
+            write_unknown_command(&builder, curr_byte, debug)
           }
         case 0xef:
           s, ok := tokens.tokens_ef[next_byte]
           if ok {
-            strings.write_string(&builder, s)
+            write_known_command(&builder, s, debug)
             step = 1
           } else {
-            strings.write_byte(&builder, curr_byte)
+            write_unknown_command(&builder, curr_byte, debug)
           }
         case 0x63:
           s, ok := tokens.tokens_63[next_byte]
           if ok {
-            strings.write_string(&builder, s)
+            write_known_command(&builder, s, debug)
             step = 1
           } else {
-            strings.write_byte(&builder, curr_byte)
+            write_unknown_command(&builder, curr_byte, debug)
           }
         case 0x53:
           s, ok := tokens.tokens_5d[next_byte]
           if ok {
-            strings.write_string(&builder, s)
+            write_known_command(&builder, s, debug)
             step = 1
           } else {
-            strings.write_byte(&builder, curr_byte)
+            write_unknown_command(&builder, curr_byte, debug)
           }
         case 0x7e:
           s, ok := tokens.tokens_7e[next_byte]
           if ok {
-            strings.write_string(&builder, s)
+            write_known_command(&builder, s, debug)
             step = 1
           } else {
-            strings.write_byte(&builder, curr_byte)
+            write_unknown_command(&builder, curr_byte, debug)
           }
         case 0xaa:
           s, ok := tokens.tokens_aa[next_byte]
           if ok {
-            strings.write_string(&builder, s)
+            write_known_command(&builder, s, debug)
             step = 1
           } else {
-            strings.write_byte(&builder, curr_byte)
+            write_unknown_command(&builder, curr_byte, debug)
           }
         case:
           s, ok := tokens.normal_tokens[curr_byte]
           if ok {
-            strings.write_string(&builder, s)
+            write_known_command(&builder, s, debug)
           } else {
-            strings.write_byte(&builder, curr_byte)
-            if debug {
-              strings.write_string(&builder, fmt.tprintf("<%02x>", curr_byte))
-            }
+            write_unknown_command(&builder, curr_byte, debug)
           }
       }
     } else {
       s, ok := tokens.normal_tokens[curr_byte]
       if ok {
-        strings.write_string(&builder, s)
+        write_known_command(&builder, s, debug)
       } else {
-        strings.write_byte(&builder, curr_byte)
-        if debug {
-          strings.write_string(&builder, fmt.tprintf("<%02x>", curr_byte))
-        }
+        write_unknown_command(&builder, curr_byte, debug)
       }
     }
 
@@ -180,6 +181,22 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
 
 
   return nil
+}
+
+write_unknown_command :: proc(builder: ^strings.Builder, b: byte, debug: bool) {
+  strings.write_string(builder, fmt.tprintf("%c", b))
+  if debug {
+    strings.write_string(builder, fmt.tprintf("<%02x>", b))
+    fmt.printfln(`Write unknown command: %c<%s>`, b, fmt.tprintf("<%02x>", b))
+  }
+}
+
+write_known_command :: proc(builder: ^strings.Builder, s: string, debug: bool) {
+  strings.write_string(builder, fmt.tprintf("%s", s))
+  if debug {
+    new_s, alloc := strings.replace_all(s, "\n", "\\n", context.temp_allocator)
+    fmt.printfln(`Write command: %s`, new_s)
+  }
 }
 
 txt_to_eightxp :: proc(from_path, to_path: string) -> Conversion_Error {
