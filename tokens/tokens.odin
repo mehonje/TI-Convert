@@ -1,310 +1,15 @@
+#+feature dynamic-literals
 package tokens
 
 import "base:runtime"
-import "core:fmt"
-
-normal_tokens: map[byte]string
-tokens_bb: map[byte]string
-tokens_ef: map[byte]string
-tokens_63: map[byte]string
-tokens_5d: map[byte]string
-tokens_7e: map[byte]string
-tokens_aa: map[byte]string
 
 reverse_tokens: map[string][]byte
 
 @(init)
 init_tokens :: proc "contextless" () {
   context = runtime.default_context()
-  init_normal_tokens()
-  init_bb_tokens()
-  init_ef_tokens()
-  init_63_tokens()
-  init_5d_tokens()
-  init_7e_tokens()
-  init_aa_tokens()
 
   init_reverse_tokens()
-}
-
-init_normal_tokens :: proc() {
-  normal_tokens = make(map[byte]string)
-
-	normal_tokens[0x3f] = "\n"
-	normal_tokens[0x82] = "*"
-  normal_tokens[0x83] = "/"
-	normal_tokens[0x70] = "+"
-	normal_tokens[0x71] = "-"
-	normal_tokens[0x10] = "("
-	normal_tokens[0x11] = ")"
-	normal_tokens[0x29] = " "
-	normal_tokens[0x2a] = "\""
-	normal_tokens[0x2d] = "!"
-	normal_tokens[0xce] = "If "
-	normal_tokens[0xcf] = "Then"
-	normal_tokens[0xd0] = "Else"
-	normal_tokens[0xd3] = "For("
-	normal_tokens[0xd1] = "While "
-	normal_tokens[0xd2] = "Repeat "
-	normal_tokens[0xd4] = "End"
-	normal_tokens[0xd8] = "Pause "
-	normal_tokens[0xd6] = "Lbl "
-	normal_tokens[0xd7] = "Goto "
-	normal_tokens[0xef] = "Wait "
-	normal_tokens[0xda] = "IS>("
-	normal_tokens[0xdb] = "DS<("
-	normal_tokens[0xe6] = "Menu("
-	normal_tokens[0x5f] = "prgm"
-	normal_tokens[0xd5] = "Return"
-	normal_tokens[0xd9] = "Stop"
-	normal_tokens[0xdc] = "Input "
-	normal_tokens[0xdd] = "Prompt"
-	normal_tokens[0xde] = "Disp "
-	normal_tokens[0xdf] = "Dispgraph"
-	normal_tokens[0xe5] = "DispTable"
-	normal_tokens[0xe0] = "Output("
-	normal_tokens[0xad] = "getKey"
-	normal_tokens[0xe1] = "ClrHome"
-	normal_tokens[0xfb] = "ClrTable"
-	normal_tokens[0xe8] = "Get("
-	normal_tokens[0xe7] = "Send("
-	normal_tokens[0x85] = "ClrDraw"
-	normal_tokens[0x9c] = "Line("
-	normal_tokens[0xa6] = "Horizontal "
-	normal_tokens[0x9d] = "Vertical "
-	normal_tokens[0xa7] = "Tangent("
-	normal_tokens[0xa9] = "DrawF "
-	normal_tokens[0xa4] = "Shade("
-	normal_tokens[0xa8] = "DrawInv "
-	normal_tokens[0xa5] = "Circle("
-	normal_tokens[0x93] = "Text("
-	normal_tokens[0x9e] = "Pt-On("
-	normal_tokens[0x9f] = "Pt-Off("
-	normal_tokens[0xa0] = "Pt-Change("
-	normal_tokens[0xa1] = "Pxl-On("
-	normal_tokens[0xa2] = "Pxl-Off("
-	normal_tokens[0xa3] = "Pxl-Change("
-	normal_tokens[0x13] = "pxl-Test("
-	normal_tokens[0x98] = "StorePic "
-	normal_tokens[0x99] = "RecallPic "
-	normal_tokens[0x9a] = "StoreGDB "
-	normal_tokens[0x9b] = "RecallGDB "
-	normal_tokens[0x6a] = "="
-	normal_tokens[0x6f] = "!="
-	normal_tokens[0x6c] = ">"
-	normal_tokens[0xf0] = "^"
-	normal_tokens[0x0d] = "^2"
-	normal_tokens[0x0c] = "^-1"
-	normal_tokens[0xbc] = "sqrt("
-	normal_tokens[0xac] = "pi"
-	normal_tokens[0x08] = "{"
-	normal_tokens[0x09] = "}"
-	normal_tokens[0x06] = "["
-	normal_tokens[0x07] = "]"
-	normal_tokens[0x5b] = "theta"
-	normal_tokens[0x2c] = "i"
-	normal_tokens[0xaf] = "?"
-	normal_tokens[0x04] = "->"
-	normal_tokens[0xbe] = "ln("
-	normal_tokens[0xc0] = "log("
-	normal_tokens[0xc3] = "arcsin("
-	normal_tokens[0xc5] = "arccos("
-	normal_tokens[0xc7] = "arctan("
-	normal_tokens[0x2b] = ","
-	normal_tokens[0x3e] = " ="
-	normal_tokens[0x03] = ">Frac"
-	normal_tokens[0x02] = ">Dec"
-	normal_tokens[0x0f] = "^3"
-	normal_tokens[0x27] = "fMin("
-	normal_tokens[0x28] = "fMax("
-	normal_tokens[0x25] = "nDeriv("
-	normal_tokens[0x24] = "fnInt("
-	normal_tokens[0x22] = "solve("
-	normal_tokens[0xb5] = "dim("
-	normal_tokens[0xb2] = "abs("
-	normal_tokens[0x72] = "Ans"
-	normal_tokens[0x14] = "augment("
-	normal_tokens[0x05] = "BoxPlot"
-	normal_tokens[0xfa] = "ClrList "
-	normal_tokens[0xca] = "cosh("
-	normal_tokens[0xcb] = "arccosh("
-	normal_tokens[0x2e] = "CubicReg"
-	normal_tokens[0x65] = "Degree"
-	normal_tokens[0x7d] = "DependAsk"
-	normal_tokens[0x7c] = "DependAuto"
-	normal_tokens[0xb3] = "det("
-	normal_tokens[0x01] = ">DMS"
-	normal_tokens[0xbf] = "e^("
-	normal_tokens[0x68] = "Eng"
-	normal_tokens[0xf5] = "ExpReg"
-	normal_tokens[0x3a] = "."
-	normal_tokens[0x41] = "A"
-	normal_tokens[0x42] = "B"
-	normal_tokens[0x43] = "C"
-	normal_tokens[0x44] = "D"
-	normal_tokens[0x45] = "E"
-	normal_tokens[0x46] = "F"
-	normal_tokens[0x47] = "G"
-	normal_tokens[0x48] = "H"
-	normal_tokens[0x49] = "I"
-	normal_tokens[0x4a] = "J"
-	normal_tokens[0x4b] = "K"
-	normal_tokens[0x4c] = "L"
-	normal_tokens[0x4d] = "M"
-	normal_tokens[0x4e] = "N"
-	normal_tokens[0x4f] = "O"
-	normal_tokens[0x50] = "P"
-	normal_tokens[0x51] = "Q"
-	normal_tokens[0x52] = "R"
-	normal_tokens[0x53] = "S"
-	normal_tokens[0x54] = "T"
-	normal_tokens[0x55] = "U"
-	normal_tokens[0x56] = "V"
-	normal_tokens[0x57] = "W"
-	normal_tokens[0x58] = "X"
-	normal_tokens[0x59] = "Y"
-	normal_tokens[0x5a] = "Z"
-	normal_tokens[0x30] = "0"
-	normal_tokens[0x31] = "1"
-	normal_tokens[0x32] = "2"
-	normal_tokens[0x33] = "3"
-	normal_tokens[0x34] = "4"
-	normal_tokens[0x35] = "5"
-	normal_tokens[0x36] = "6"
-	normal_tokens[0x37] = "7"
-	normal_tokens[0x38] = "8"
-	normal_tokens[0x39] = "9"
-	normal_tokens[0x0a] = "getTime"
-}
-
-init_bb_tokens :: proc() {
-  tokens_bb = make(map[byte]string)
-
-	tokens_bb[0x45] = "GraphStyle("
-	tokens_bb[0x54] = "DelVar "
-	tokens_bb[0x2a] = "expr("
-	tokens_bb[0x56] = "String->Equ("
-	tokens_bb[0x4f] = "a+bi"
-	tokens_bb[0x28] = "angle("
-	tokens_bb[0x59] = "ANOVA("
-	tokens_bb[0x68] = "Archive "
-	tokens_bb[0x02] = "bal("
-  tokens_bb[0x16] = "binomcdf("
-	tokens_bb[0x15] = "binompdf("
-	tokens_bb[0x13] = "x^2cdf("
-	tokens_bb[0x1d] = "x^pdf("
-	tokens_bb[0x40] = "x^2-Test("
-	tokens_bb[0x57] = "Clear Entries"
-	tokens_bb[0x52] = "ClrAllLists"
-	tokens_bb[0x25] = "conj("
-	tokens_bb[0x29] = "cumSum("
-	tokens_bb[0x07] = "dbd("
-	tokens_bb[0x67] = "DiagnosticOff"
-	tokens_bb[0x66] = "DiagnosticOn"
-	tokens_bb[0x31] = "e"
-	tokens_bb[0x06] = ">Eff("
-	tokens_bb[0x55] = "Equ>String("
-	tokens_bb[0x51] = "ExprOff"
-	tokens_bb[0x50] = "ExprOn"
-}
-
-init_ef_tokens :: proc() {
-  tokens_ef = make(map[byte]string)
-
-	tokens_ef[0x65] = "GraphColor("
-	tokens_ef[0x11] = "OpenLib("
-	tokens_ef[0x12] = "ExecLib"
-	tokens_ef[0x98] = "eval("
-	tokens_ef[0x97] = "toString("
-	tokens_ef[0x41] = "BLUE"
-	tokens_ef[0x42] = "RED"
-	tokens_ef[0x43] = "BLACK"
-	tokens_ef[0x44] = "MAGENTA"
-	tokens_ef[0x45] = "GREEN"
-	tokens_ef[0x46] = "ORANGE"
-	tokens_ef[0x47] = "BROWN"
-	tokens_ef[0x48] = "NAVY"
-	tokens_ef[0x49] = "LTBLUE"
-	tokens_ef[0x4a] = "YELLOW"
-	tokens_ef[0x4b] = "WHITE"
-	tokens_ef[0x4c] = "LTGRAY"
-	tokens_ef[0x4d] = "MEDGRAY"
-	tokens_ef[0x4e] = "GRAY"
-	tokens_ef[0x4f] = "DARKGRAY"
-	tokens_ef[0x67] = "TextColor("
-	tokens_ef[0x5b] = "BackgroundOn "
-	tokens_ef[0x64] = "BackgroundOff "
-	tokens_ef[0x2e] = "l"
-	tokens_ef[0x33] = "Sigma("
-	tokens_ef[0x34] = "logBASE("
-	tokens_ef[0xa6] = "piecewise("
-	tokens_ef[0x3B] = "AUTO"
-	tokens_ef[0x6c] = "BorderColor"
-	tokens_ef[0x93] = "CENTER"
-	tokens_ef[0x02] = "checkTmr("
-	tokens_ef[0x14] = "x^2GOF-Test("
-	tokens_ef[0x38] = "CLASSIC"
-	tokens_ef[0x0f] = "ClockOff"
-	tokens_ef[0x10] = "ClockOn"
-	tokens_ef[0x06] = "dayOfWk("
-	tokens_ef[0x3c] = "DEC"
-	tokens_ef[0x6b] = "DetectAsymOff"
-	tokens_ef[0x6a] = "DetectAsymOn"
-	tokens_ef[0x75] = "Dot-Thin"
-	tokens_ef[0x09] = "getDate"
-}
-
-init_63_tokens :: proc() {
-  tokens_63 = make(map[byte]string)
-
-  tokens_63[0x0a] = "Xmin"
-  tokens_63[0x0b] = "Xmax"
-  tokens_63[0x02] = "Xscl"
-  tokens_63[0x0c] = "Ymin"
-  tokens_63[0x0d] = "Ymax"
-  tokens_63[0x03] = "Yscl"
-  tokens_63[0x36] = "Xres"
-  tokens_63[0x26] = "deltaX"
-  tokens_63[0x27] = "deltaY"
-  tokens_63[0x28] = "XFact"
-  tokens_63[0x39] = "Yfact"
-  tokens_63[0x38] = "TraceStep"
-}
-
-init_5d_tokens :: proc() {
-  tokens_5d = make(map[byte]string)
-
-  tokens_5d[0x00] = "L1"
-  tokens_5d[0x01] = "L2"
-  tokens_5d[0x02] = "L3"
-  tokens_5d[0x03] = "L4"
-  tokens_5d[0x04] = "L5"
-  tokens_5d[0x05] = "L6"
-}
-
-init_7e_tokens :: proc() {
-  tokens_7e = make(map[byte]string)
-
-  tokens_7e[0x09] = "AxesOff"
-  tokens_7e[0x08] = "AxesOn"
-  tokens_7e[0x05] = "CoordOff"
-  tokens_7e[0x04] = "CoordOn"
-  tokens_7e[0x07] = "Dot-Thick"
-}
-
-init_aa_tokens :: proc() {
-  tokens_aa = make(map[byte]string)
-
-  tokens_aa[0x00] = "Str1"
-  tokens_aa[0x01] = "Str2"
-  tokens_aa[0x02] = "Str3"
-  tokens_aa[0x03] = "Str4"
-  tokens_aa[0x04] = "Str5"
-  tokens_aa[0x05] = "Str6"
-  tokens_aa[0x06] = "Str7"
-  tokens_aa[0x07] = "Str8"
-  tokens_aa[0x08] = "Str9"
-  tokens_aa[0x09] = "Str0"
 }
 
 init_reverse_tokens :: proc() {
@@ -346,3 +51,278 @@ init_reverse_tokens :: proc() {
   }
 }
 
+normal_tokens := map[byte]string{ // Normal tokens
+	0x3f = "\n",          // Newline
+	0x82 = "*",           // Multiplication
+	0x83 = "/",           // Division
+	0x70 = "+",           // Addition
+	0x71 = "-",           // Subtraction
+	0x10 = "(",           // Left Parenthesis
+	0x11 = ")",           // Right Parenthesis
+	0x29 = " ",           // Space
+	0x2a = "\"",          // Quotation mark
+	0x2d = "!",           // Factorial
+	0xce = "If ",         // If
+	0xcf = "Then",        // Then
+	0xd0 = "Else",        // Else
+	0xd3 = "For(",        // For(
+	0xd1 = "While ",      // While
+	0xd2 = "Repeat ",     // Repeat
+	0xd4 = "End",         // End
+	0xd8 = "Pause ",      // Pause
+	0xd6 = "Lbl ",        // Label
+	0xd7 = "Goto ",       // Goto
+	0xef = "Wait ",       // Wait
+	0xda = "IS>(",        // Increment and skip if greater than
+	0xdb = "DS<(",        // Decrement and skip if less than
+	0xe6 = "Menu(",       // Menu
+	0x5f = "prgm",        // Program
+	0xd5 = "Return",      // Return
+	0xd9 = "Stop",        // Stop
+	0xdc = "Input ",      //
+	0xdd = "Prompt",      //
+	0xde = "Disp ",       //
+	0xdf = "Dispgraph",   //
+	0xe5 = "DispTable",   //
+	0xe0 = "Output(",     //
+	0xad = "getKey",      //
+	0xe1 = "ClrHome",     // Clear home
+	0xfb = "ClrTable",    // Clear table
+	0xe8 = "Get(",        //
+	0xe7 = "Send(",       //
+	0x85 = "ClrDraw",     //
+	0x9c = "Line(",       //
+	0xa6 = "Horizontal ", //
+	0x9d = "Vertical ",   //
+	0xa7 = "Tangent(",    //
+	0xa9 = "DrawF ",      //
+	0xa4 = "Shade(",      //
+	0xa8 = "DrawInv ",    //
+	0xa5 = "Circle(",     //
+	0x93 = "Text(",       //
+	0x9e = "Pt-On(",      //
+	0x9f = "Pt-Off(",     //
+	0xa0 = "Pt-Change(",  //
+	0xa1 = "Pxl-On(",     //
+	0xa2 = "Pxl-Off(",    //
+	0xa3 = "Pxl-Change(", //
+	0x13 = "pxl-Test(",   //
+	0x98 = "StorePic ",   //
+	0x99 = "RecallPic ",  //
+	0x9a = "StoreGDB ",   //
+	0x9b = "RecallGDB ",  //
+	0x6a = "=",           // Equal
+	0x6f = "!=",          // Not equal
+	0x6c = ">",           //
+	0x6e = "<",           //
+	0x6b = ">=",          //
+	0x6d = "<=",          //
+	0x40 = " and ",       //
+	0x3c = " or ",        //
+	0x3d = " xor ",       //
+	0xb8 = "not(",        //
+	0xc2 = "sin(",        //
+	0xc4 = "cos(",        //
+	0xc6 = "tan(",        //
+	0xf0 = "^",           //
+	0x0d = "^2",          //
+	0x0c = "^-1",         //
+	0xbc = "sqrt(",       //
+	0xac = "pi",          //
+	0x08 = "{",           //
+	0x09 = "}",           //
+	0x06 = "[",           //
+	0x07 = "]",           //
+	0x5b = "theta",       //
+	0x2c = "i",           //
+	0xaf = "?",           //
+	0x04 = "->",          //
+	0xbe = "ln(",         //
+	0xc0 = "log(",        //
+	0xc3 = "arcsin(",     //
+	0xc5 = "arccos(",     //
+	0xc7 = "arctan(",     //
+	0x2b = ",",           //
+	0x3e = ":",           //
+	0x03 = ">Frac",       //
+	0x02 = ">Dec",        //
+	0x0f = "^3",          //
+	0x27 = "fMin(",       //
+	0x28 = "fMax(",       //
+	0x25 = "nDeriv(",     //
+	0x24 = "fnInt(",      //
+	0x22 = "solve(",      //
+	0xb5 = "dim(",        //
+	0xb2 = "abs(",        //
+	0x72 = "Ans",         //
+	0x14 = "augment(",    //
+	0x05 = "BoxPlot",     //
+	0xfa = "ClrList ",    //
+	0xca = "cosh(",       //
+	0xcb = "arccosh(",    //
+	0x2e = "CubicReg",    //
+	0x65 = "Degree",      //
+	0x7d = "DependAsk",   //
+	0x7c = "DependAuto",  //
+	0xb3 = "det(",        //
+	0x01 = ">DMS",        //
+	0xbf = "e^(",         //
+	0x68 = "Eng",         //
+	0xf5 = "ExpReg",      //
+	0x3a = ".",           //
+	0x41 = "A",           //
+	0x42 = "B",           //
+	0x43 = "C",           //
+	0x44 = "D",           //
+	0x45 = "E",           //
+	0x46 = "F",           //
+	0x47 = "G",           //
+	0x48 = "H",           //
+	0x49 = "I",           //
+	0x4a = "J",           //
+	0x4b = "K",           //
+	0x4c = "L",           //
+	0x4d = "M",           //
+	0x4e = "N",           //
+	0x4f = "O",           //
+	0x50 = "P",           //
+	0x51 = "Q",           //
+	0x52 = "R",           //
+	0x53 = "S",           //
+	0x54 = "T",           //
+	0x55 = "U",           //
+	0x56 = "V",           //
+	0x57 = "W",           //
+	0x58 = "X",           //
+	0x59 = "Y",           //
+	0x5a = "Z",           //
+	0x30 = "0",           //
+	0x31 = "1",           //
+	0x32 = "2",           //
+	0x33 = "3",           //
+	0x34 = "4",           //
+	0x35 = "5",           //
+	0x36 = "6",           //
+	0x37 = "7",           //
+	0x38 = "8",           //
+	0x39 = "9",           //
+	0x0a = "getTime",     //
+}
+
+tokens_bb := map[byte]string{ // 2-byte tokens
+	0x45 = "GraphStyle(",   //
+	0x54 = "DelVar ",       //
+	0x2a = "expr(",         //
+	0x56 = "String->Equ(",  //
+	0x4f = "a+bi",          //
+	0x28 = "angle(",        //
+	0x59 = "ANOVA(",        //
+	0x68 = "Archive ",      //
+	0x02 = "bal(",          //
+	0x16 = "binomcdf(",     //
+	0x15 = "binompdf(",     //
+	0x13 = "x^2cdf(",       //
+	0x1d = "x^pdf(",        //
+	0x40 = "x^2-Test(",     //
+	0x57 = "Clear Entries", //
+	0x52 = "ClrAllLists",   //
+	0x25 = "conj(",         //
+	0x29 = "cumSum(",       //
+	0x07 = "dbd(",          //
+	0x67 = "DiagnosticOff", //
+	0x66 = "DiagnosticOn",  //
+	0x31 = "e",             //
+	0x06 = ">Eff(",         //
+	0x55 = "Equ>String(",   //
+	0x51 = "ExprOff",       //
+	0x50 = "ExprOn",        //
+}
+
+tokens_ef := map[byte]string{
+	0x65 = "GraphColor(",    //
+	0x11 = "OpenLib(",       //
+	0x12 = "ExecLib",        //
+	0x98 = "eval(",          //
+	0x97 = "toString(",      //
+	0x41 = "BLUE",           // Blue
+	0x42 = "RED",            // Red
+	0x43 = "BLACK",          // Black
+	0x44 = "MAGENTA",        // Magenta
+	0x45 = "GREEN",          // Green
+	0x46 = "ORANGE",         // Orange
+	0x47 = "BROWN",          // Brown
+	0x48 = "NAVY",           // Navy
+	0x49 = "LTBLUE",         // Light blue
+	0x4a = "YELLOW",         // Yellow
+	0x4b = "WHITE",          // White
+	0x4c = "LTGRAY",         // Light grey
+	0x4d = "MEDGRAY",        // Medium grey
+	0x4e = "GRAY",           // Grey
+	0x4f = "DARKGRAY",       // Dark grey
+	0x67 = "TextColor(",     //
+	0x5b = "BackgroundOn ",  //
+	0x64 = "BackgroundOff ", //
+	0x2e = "l",              //
+	0x33 = "Sigma(",         //
+	0x34 = "logBASE(",       //
+	0xa6 = "piecewise(",     //
+	0x3B = "AUTO",           //
+	0x6c = "BorderColor",    //
+	0x93 = "CENTER",         //
+	0x02 = "checkTmr(",      //
+	0x14 = "x^2GOF-Test(",   //
+	0x38 = "CLASSIC",        //
+	0x0f = "ClockOff",       //
+	0x10 = "ClockOn",        //
+	0x06 = "dayOfWk(",       //
+	0x3c = "DEC",            //
+	0x6b = "DetectAsymOff",  //
+	0x6a = "DetectAsymOn",   //
+	0x75 = "Dot-Thin",       //
+	0x09 = "getDate",        //
+}
+
+tokens_63 := map[byte]string{
+	0x0a = "Xmin",      //
+	0x0b = "Xmax",      //
+	0x02 = "Xscl",      //
+	0x0c = "Ymin",      //
+	0x0d = "Ymax",      //
+	0x03 = "Yscl",      //
+	0x36 = "Xres",      //
+	0x26 = "deltaX",    //
+	0x27 = "deltaY",    //
+	0x28 = "XFact",     //
+	0x29 = "Yfact",     //
+	0x38 = "TraceStep", //
+}
+
+tokens_5d := map[byte]string{
+	0x00 = "L1", //
+	0x01 = "L2", //
+	0x02 = "L3", //
+	0x03 = "L4", //
+	0x04 = "L5", //
+	0x05 = "L6", //
+}
+
+tokens_7e := map[byte]string{
+	0x09 = "AxesOff",   //
+	0x08 = "AxesOn",    //
+	0x05 = "CoordOff",  //
+	0x04 = "CoordOn",   //
+	0x07 = "Dot-Thick", //
+}
+
+tokens_aa := map[byte]string{
+	0x00 = "Str1", //
+	0x01 = "Str2", //
+	0x02 = "Str3", //
+	0x03 = "Str4", //
+	0x04 = "Str5", //
+	0x05 = "Str6", //
+	0x06 = "Str7", //
+	0x07 = "Str8", //
+	0x08 = "Str9", //
+	0x09 = "Str0", //
+}
