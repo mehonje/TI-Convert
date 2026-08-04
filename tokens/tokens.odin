@@ -344,6 +344,5 @@ init_reverse_tokens :: proc() {
     reverse_tokens[val][0] = 0xaa
     reverse_tokens[val][1] = key
   }
-  fmt.printfln("%v", reverse_tokens["}"])
 }
 
