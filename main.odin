@@ -49,13 +49,13 @@ main :: proc() {
       err := convert.eightxp_to_txt(input_path, output_path, debug)
 
       if err != nil {
-        fmt.println(err)
+        fmt.eprintfln("Failed to convert \"%s\" to \"%s\": %w", input_path, output_path, err)
       }
     case ".txt":
       err := convert.txt_to_eightxp(input_path, output_path)
 
       if err != nil {
-        fmt.println(err)
+        fmt.eprintfln("Failed to convert \"%s\" to \"%s\": %w", input_path, output_path, err)
       }
     case:
       fmt.printfln("Unsupported file extension \"%s\"", input_ext)
