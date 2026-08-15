@@ -124,6 +124,10 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
     strings.write_byte(&meta_builder, '\n')
   }
 
+  if debug {
+    strings.write_string(&meta_builder, "DEBUG\n")
+  }
+
   meta_string := strings.to_string(meta_builder)
   final_bytes := transmute([]byte)meta_string
 
@@ -134,10 +138,6 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
 
   builder := strings.builder_make()
   defer strings.builder_destroy(&builder)
-
-  if debug {
-    strings.write_string(&builder, "DEBUG")
-  }
 
   idx := 0
   for idx < len(program_data) {
@@ -269,7 +269,7 @@ txt_to_eightxp :: proc(from_path, to_path: string) -> Conversion_Error {
   }
 
   // read meta
-  meta: [4]string
+  meta: [5]string
   {
     meta_file, err := os.read_entire_file(meta_path, context.allocator)
     if err != nil {
@@ -278,18 +278,18 @@ txt_to_eightxp :: proc(from_path, to_path: string) -> Conversion_Error {
     defer delete(meta_file)
     meta_string := string(meta_file)
 
-    // read first 4 lines
+    // read first 5 lines
     i := 0
     for line in strings.split_lines_iterator(&meta_string) {
       meta[i] = line
       i += 1
-      if i > 3 {
+      if i >= 5 {
         break
       }
     }
   }
 
-  if meta[0] == "DEBUG" {
+  if meta[4] == "DEBUG" {
     return Debug_File {}
   }
 
