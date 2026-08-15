@@ -8,6 +8,42 @@ import "core:path/filepath"
 import "core:os"
 import "core:strings"
 
+Conversion_Error :: union {
+  os.Error,
+  File_Size_Too_Small,
+  Debug_File,
+  Name_Too_Long,
+  Comment_Too_Long,
+  Hex_Decoding_Error,
+  Unknown_Command,
+}
+
+File_Size_Too_Small :: struct {
+  size: int,
+  expected: int,
+}
+
+Debug_File :: struct {}
+
+Hex_Decoding_Error :: struct {
+  str: string,
+}
+
+Name_Too_Long :: struct {
+  size: int,
+  expected: int,
+}
+
+Comment_Too_Long :: struct {
+  size: int,
+  expected: int,
+}
+
+Unknown_Command :: struct {
+  idx: int,
+}
+
+/*
 Conversion_Error :: enum {
   File_Size_Too_Small,
   File_Read_Error,
@@ -16,7 +52,9 @@ Conversion_Error :: enum {
   Comment_Too_Long,
   Hex_Decoding_Error,
   Unknown_Command,
+  Debug_File
 }
+*/
 
 eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Error {
   eightxp_path: string = from_path
@@ -48,11 +86,14 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
   byte_data, err := os.read_entire_file(eightxp_path, context.allocator)
   defer delete(byte_data)
   if err != nil {
-    return Conversion_Error.File_Read_Error
+    return err
   }
 
   if len(byte_data) < 76 {
-    return Conversion_Error.File_Size_Too_Small
+    return File_Size_Too_Small {
+      size = len(byte_data),
+      expected = 76,
+    }
   }
 
   program_meta[0] = string(byte_data[60:67]) // store bytes 60 - 67 to metadata (program name)
@@ -88,11 +129,15 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
 
   err = os.write_entire_file(meta_path, final_bytes)
   if err != nil {
-    return Conversion_Error.File_Write_Error
+    return err
   }
 
   builder := strings.builder_make()
   defer strings.builder_destroy(&builder)
+
+  if debug {
+    strings.write_string(&builder, "DEBUG")
+  }
 
   idx := 0
   for idx < len(program_data) {
@@ -176,7 +221,7 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
   program_string := strings.to_string(builder)
   err = os.write_entire_file(txt_path, program_string)
   if err != nil {
-    return Conversion_Error.File_Write_Error
+    return err
   }
 
 
@@ -228,7 +273,7 @@ txt_to_eightxp :: proc(from_path, to_path: string) -> Conversion_Error {
   {
     meta_file, err := os.read_entire_file(meta_path, context.allocator)
     if err != nil {
-      return Conversion_Error.File_Read_Error
+      return err
     }
     defer delete(meta_file)
     meta_string := string(meta_file)
@@ -244,11 +289,21 @@ txt_to_eightxp :: proc(from_path, to_path: string) -> Conversion_Error {
     }
   }
 
+  if meta[0] == "DEBUG" {
+    return Debug_File {}
+  }
+
   if len(meta[0]) > 8 {
-    return Conversion_Error.Name_Too_Long
+    return Name_Too_Long {
+      size = len(meta[0]),
+      expected = 8,
+    }
   }
   if len(meta[1]) > 42 {
-    return Conversion_Error.Comment_Too_Long
+    return Comment_Too_Long {
+      size = len(meta[1]),
+      expected = 42,
+    }
   }
 
   program_name: [8]byte // null-padded name
@@ -275,7 +330,9 @@ txt_to_eightxp :: proc(from_path, to_path: string) -> Conversion_Error {
     decoded_file_type, ok := hex.decode(transmute([]u8)meta[2], context.allocator)
     defer delete(decoded_file_type)
     if !ok {
-      return Conversion_Error.Hex_Decoding_Error
+      return Hex_Decoding_Error {
+        str = meta[2]
+      }
     }
     append(&file_bytes, ..decoded_file_type[:]) 
   }
@@ -285,7 +342,9 @@ txt_to_eightxp :: proc(from_path, to_path: string) -> Conversion_Error {
     decoded_archive_state, ok := hex.decode(transmute([]u8)meta[3], context.allocator)
     defer delete(decoded_archive_state)
     if !ok {
-      return Conversion_Error.Hex_Decoding_Error
+      return Hex_Decoding_Error {
+        str = meta[3]
+      }
     }
     append(&file_bytes, ..decoded_archive_state[:]) 
   }
@@ -296,7 +355,7 @@ txt_to_eightxp :: proc(from_path, to_path: string) -> Conversion_Error {
   { // append program data
     program_bytes, err := os.read_entire_file(txt_path, context.allocator)
     if err != nil {
-      return Conversion_Error.File_Read_Error
+      return err
     }
     defer delete(program_bytes)
 
@@ -314,7 +373,9 @@ txt_to_eightxp :: proc(from_path, to_path: string) -> Conversion_Error {
         n = len(program_bytes) - i
       }
       if n <= 0 {
-        return  Conversion_Error.Unknown_Command
+        return Unknown_Command {
+          idx = i,
+        }
       }
 
       command_bytes := program_bytes[i:i+n]
@@ -364,7 +425,7 @@ txt_to_eightxp :: proc(from_path, to_path: string) -> Conversion_Error {
 
   err := os.write_entire_file_from_bytes(eightxp_path, file_bytes[:])
   if err != nil {
-    return Conversion_Error.File_Write_Error
+    return err
   }
 
   return nil
