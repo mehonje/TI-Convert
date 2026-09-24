@@ -151,7 +151,7 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
 				s, ok := tokens.tokens_bb[next_byte]
 				if ok {
 					write_known_command(&builder, s, debug)
-					step = 1
+					step = 2
 				} else {
 					write_unknown_command(&builder, curr_byte, debug)
 				}
@@ -159,7 +159,7 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
 				s, ok := tokens.tokens_ef[next_byte]
 				if ok {
 					write_known_command(&builder, s, debug)
-					step = 1
+					step = 2
 				} else {
 					write_unknown_command(&builder, curr_byte, debug)
 				}
@@ -167,7 +167,7 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
 				s, ok := tokens.tokens_63[next_byte]
 				if ok {
 					write_known_command(&builder, s, debug)
-					step = 1
+					step = 2
 				} else {
 					write_unknown_command(&builder, curr_byte, debug)
 				}
@@ -175,7 +175,7 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
 				s, ok := tokens.tokens_5d[next_byte]
 				if ok {
 					write_known_command(&builder, s, debug)
-					step = 1
+					step = 2
 				} else {
 					write_unknown_command(&builder, curr_byte, debug)
 				}
@@ -183,7 +183,7 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
 				s, ok := tokens.tokens_7e[next_byte]
 				if ok {
 					write_known_command(&builder, s, debug)
-					step = 1
+					step = 2
 				} else {
 					write_unknown_command(&builder, curr_byte, debug)
 				}
@@ -191,7 +191,7 @@ eightxp_to_txt :: proc(from_path, to_path: string, debug: bool) -> Conversion_Er
 				s, ok := tokens.tokens_aa[next_byte]
 				if ok {
 					write_known_command(&builder, s, debug)
-					step = 1
+					step = 2
 				} else {
 					write_unknown_command(&builder, curr_byte, debug)
 				}
