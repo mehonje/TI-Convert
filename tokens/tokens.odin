@@ -280,6 +280,10 @@ tokens_ef := map[byte]string {
 	0x6a = "DetectAsymOn", //
 	0x75 = "Dot-Thin", //
 	0x09 = "getDate", //
+	0x0c = "getDtFmt", //
+	0x07 = "getDtStr(", //
+	0x0d = "getTmStr(", //
+	0x08 = "getTmStr(", //
 }
 
 tokens_63 := map[byte]string {
