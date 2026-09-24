@@ -206,7 +206,6 @@ normal_tokens := map[byte]string { 	// Normal tokens
 	0x37 = "7", //
 	0x38 = "8", //
 	0x39 = "9", //
-	0x0a = "getTime", //
 }
 
 tokens_bb := map[byte]string { 	// 2-byte tokens
@@ -282,8 +281,9 @@ tokens_ef := map[byte]string {
 	0x09 = "getDate", //
 	0x0c = "getDtFmt", //
 	0x07 = "getDtStr(", //
-	0x0d = "getTmStr(", //
+	0x0d = "getTmFmt", //
 	0x08 = "getTmStr(", //
+	0x0a = "getTime", //
 }
 
 tokens_63 := map[byte]string {
